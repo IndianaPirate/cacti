@@ -1,0 +1,35 @@
+version: '3'
+services:
+  db:
+    image: million12/mariadb
+    container_name: cacti-db
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_USER=cactiuser
+      - MARIADB_PASS=my_password
+    networks:
+      network:
+        ipv4_address: 192.168.0.2
+  cacti:
+    image: polinux/cacti
+    container_name: cacti
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - DB_ADDRESS=192.168.0.2
+      - DB_USER=cactiuser
+      - DB_PASS=my_password
+    networks:
+      network:
+        ipv4_address: 192.168.0.3
+    links:
+      - db  
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/16
+          gateway: 192.168.0.1
